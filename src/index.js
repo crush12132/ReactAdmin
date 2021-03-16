@@ -1,17 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {BrowserRouter} from 'react-router-dom'
+import App from './App'
+import memoryUtil from "./utils/memoryUtil"
+import localStorageUtil from "./utils/localstorageUtil"
+
+//读取local中保存user，保存到内存中
+const user = localStorageUtil.getUser()
+memoryUtil.user = user
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+
+<BrowserRouter>
+<App/>
+</BrowserRouter>,
+document.getElementById('root'))
