@@ -12,7 +12,7 @@
     //读取用户
     getUser(){
         // return JSON.parse(localStorage.getItem(USE_KEY)||'{}')
-        return store.get(USE_KEY||{})
+        return store.get(USE_KEY) || {}
        
     },
     //删除用户
