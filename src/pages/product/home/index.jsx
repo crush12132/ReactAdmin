@@ -4,6 +4,7 @@ import {SearchOutlined,PlusOutlined} from '@ant-design/icons';
 import LinkButton from '../../../components/LinkButton'
 import {reqProduct,reqSearchProduct,reqUpdateStatus} from '../../../api'
 import {PAGE_SIZE} from '../../../constant'
+import memoryUtil from '../../../utils/memoryUtil'
 const Option = Select.Option
 
 export default class ProductHome extends Component {
@@ -69,13 +70,32 @@ export default class ProductHome extends Component {
                 render:(product)=>{
                     return (
                     <span>
+                        {/* 使用BrowserRouter
                         <LinkButton onClick={()=>{this.props.history.push('/product/detail',product)}}>详情</LinkButton>
-                        <LinkButton onClick={()=>{this.props.history.push('/product/addUpdate',product)}}>修改</LinkButton>
+                        <LinkButton onClick={()=>{this.props.history.push('/product/addUpdate',product)}}>修改</LinkButton> */}
+                         
+                         {/* 使用HashRouter */}
+                        <LinkButton onClick={()=>{this.showDetail(product)}}>详情</LinkButton>
+                        <LinkButton onClick={()=>{this.showUpdate(product)}}>修改</LinkButton>
                     </span>
                     )
                 }
               },
           ];
+    }
+
+    /**
+     * 使用HashRouter不接收push传递的第二个参数
+     * 所以借助memoryUtil报仇呢product
+     */
+    showDetail=(product)=>{
+        memoryUtil.product = product;
+        this.props.history.push('/product/detail')
+    }
+
+    showUpdate=(product)=>{
+        memoryUtil.product = product;
+        this.props.history.push('/product/addUpdate')
     }
 
     /**

@@ -5,6 +5,7 @@ import LinkButton from '../../../components/LinkButton'
 import {reqCategorys,reqAddOrUpdateProduct} from '../../../api'
 import PicturesWall from './pictures_wall'
 import RichTextEditor from './rich_text_editor'
+import memoryUtil from '../../../utils/memoryUtil'
 const Item = Form.Item
 const { TextArea } = Input;
 
@@ -46,7 +47,7 @@ export default class ProductAddUpdate extends Component {
         ))
 
         const {isUpdate,product} = this
-        const {pCategoryId,categoryId} = product 
+        const {pCategoryId} = product 
         if(isUpdate && pCategoryId!=='0'){
             //获取对应的二级分类列表
             const subCategorys =await this.getCategorys(pCategoryId)
@@ -80,11 +81,29 @@ export default class ProductAddUpdate extends Component {
     }
 
     UNSAFE_componentWillMount() {
-        //取出携带的数据
-       const product =  this.props.location.state
-       this.isUpdate = !!product;
+       //使用BrowserRouter 取出携带的数据
+       //const product =  this.props.location.state
+ 
+       //使用HashRouter 取出携带的数据
+       const product =  memoryUtil.product
+
+       //使用BrowserRouter 不存在为undefined
+       // this.isUpdate = !!product;
+
+
+       //使用HashRouter 不存在为{},如果是!!product永远为真，所以!!product._id
+       this.isUpdate = !!product._id;
+
        this.product = product || {};
     }
+
+    /**
+      * 在卸载之前清除保存的数据
+      */
+    componentWillUnmount(){
+        memoryUtil.product = {}
+    }
+   
 
     //提交按钮
     onFinish =async (values) => {

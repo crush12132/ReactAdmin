@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom'
+import {connect} from 'react-redux'
 import { Modal } from 'antd';
+
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import './index.less'
 import logo from './images/Sunny.png'
 import {formateData} from '../../config/timeConfig'
-import memoryUtil from '../../utils/memoryUtil'
 import {reqWeatherandAddress} from '../../api'
 import menuList from '../../config/menuConfig'
-import localstorageUtil from '../../utils/localstorageUtil'
 import LinkButton from '../LinkButton'
-
+import {logout,setHeadTitle} from '../../redux/actions'
 
 class Header extends Component {
 
@@ -65,12 +65,13 @@ class Header extends Component {
             icon: <ExclamationCircleOutlined />,
             okText:"确认",
             cancelText:"取消",
-            onOk:()=>{               
-              //删除保存的user信息
-              localstorageUtil.removeUser();
-              memoryUtil.user = {}
-              //跳转到login
-              this.props.history.replace();
+            onOk:()=>{      
+                this.props.logout()         
+            //   //删除保存的user信息
+            //   localstorageUtil.removeUser();
+            //   memoryUtil.user = {}
+            //   //跳转到login
+            //   this.props.history.replace();
             }
 
         });
@@ -92,8 +93,9 @@ class Header extends Component {
 
     render() {
         const {currentTime,weather,city} = this.state
-        const username = memoryUtil.user.username;
-        const title = this.getTitle();
+        const username = this.props.user.username;
+        // const title = this.getTitle();
+        const title = this.props.headTitle;
         return (
             <div className="header">
                 <div className="header-top">
@@ -115,4 +117,14 @@ class Header extends Component {
     }
 }
 
-export default withRouter(Header)
+export default connect(
+    state=>({
+        headTitle:state.headTitle,
+        user:state.user
+        
+    }),
+    {
+        logout
+        
+    }
+)(withRouter(Header))

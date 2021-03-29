@@ -4,6 +4,7 @@ import {LeftOutlined} from '@ant-design/icons';
 import LinkButton from '../../../components/LinkButton'
 import {BASE_IMG_SRC} from '../../../constant'
 import {reqCategory} from '../../../api'
+import memoryUtil from '../../../utils/memoryUtil'
 
 const Item = List.Item
 
@@ -17,8 +18,14 @@ export default class ProductDetail extends Component {
     
 
     async componentDidMount(){
-      const {categoryId,pCategoryId} = this.props.location.state
+      // // 使用BrowserRouter
+      // const {categoryId,pCategoryId} = this.props.location.state
+
+      // 使用HashRouter
+      const {categoryId,pCategoryId} = memoryUtil.product
      
+      console.log(' memoryUtil.product',categoryId,pCategoryId);
+
       if(pCategoryId==='0'){//发送请求获取一级分类名称
        const result =await reqCategory(categoryId)
        const cName1 = result.data.name;
@@ -49,9 +56,17 @@ export default class ProductDetail extends Component {
     }
 
 
+     /**
+      * 在卸载之前清除保存的数据
+      */
+     componentWillUnmount(){
+      memoryUtil.product = {}
+  }
 
     render() {
-        const {name,desc,price,imgs,detail} = this.props.location.state
+        // const {name,desc,price,imgs,detail} = this.props.location.state
+        const {name,desc,price,imgs,detail} = memoryUtil.product
+        console.log(' memoryUtil.product',imgs);
         const {cName1,cName2} = this.state
         const title = (
           <span>

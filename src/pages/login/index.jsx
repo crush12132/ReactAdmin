@@ -1,48 +1,27 @@
 import React, { Component } from 'react'
 import { Form, Input, Button,message } from 'antd';
+import {connect} from 'react-redux'
 import {UserOutlined,LockOutlined} from '@ant-design/icons';
 import './index.less'
 import logo from '../../assets/images/qinglang.png'
-import {reqLogin} from '../../api'
-import memoryUtil from "../../utils/memoryUtil"
-import localstorageUtil  from "../../utils/localstorageUtil" 
 import {Redirect} from 'react-router-dom'
-
+import {login} from '../../redux/actions'
 
 // 登陆界面
 /*
   1.前台表单验证
   2.收集表单输入数据
  */
-export default class Login extends Component {
+class Login extends Component {
    
    
      onFinish=async (values)=>{
         //获取表单数据
-         const {username,password} = values
-        //  console.log('提交登陆的Ajax请求',values)
-       
-        const result =  await reqLogin(username,password)
         
-        if(result.status === 0){//登陆成功
-            message.success("登陆成功!!!")
+         const {username,password} = values
 
-            //保存user
-            const user = result.data
-
-            //保存在内存中
-            memoryUtil.user = user;
-
-            //保存到local
-            localstorageUtil.saveUser(user)
-
-            //跳转到管理界面
-            this.props.history.replace('/')
-        }else{//登陆失败
-            message.error("登陆失败!!!")
-        }
-
-
+         this.props.login(username,password)
+     
     }
     onFinishFailed=(err)=>{
         console.log('验证失败！',err)
@@ -71,17 +50,23 @@ export default class Login extends Component {
     }
 
     render() {
-        const user = memoryUtil.user;
+        // const user = memoryUtil.user;
+        console.log(this.props)
+        const user = this.props.user;
         if(user && user._id){
-            return <Redirect to='/'/>
+            return <Redirect to='/home'/>
         }
+
+        // const errorMsg = this.props.user.errorMsg
+
+
         return (
             <div className="login">
                 <header className="login-header">
                     <img src={logo} alt="logo"/>
                     <h1>React项目：后台管理系统</h1>
                 </header>
-
+                 {/* <div>{errorMsg}</div> */}
                 <section className="login-content">
                     <h2>用户登录</h2>
                     <Form  onFinish={this.onFinish} onFinishFailed={this.onFinishFailed} className="login-form">
@@ -134,6 +119,11 @@ export default class Login extends Component {
         )
     }
 }
+
+export default connect(
+    state => ({user: state.user}),
+    {login}
+  )(Login)
 
 /**
  * async 和 await

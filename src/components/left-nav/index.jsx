@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import {Link,withRouter} from 'react-router-dom'
+import {connect} from 'react-redux'
+import {setHeadTitle} from '../../redux/actions'
 import './index.less'
 import logo from '../../assets/images/qinglang.png'
 import { Menu } from 'antd';
@@ -43,8 +45,8 @@ const { SubMenu } = Menu;
      */
     hasAuth=(item)=>{
         const {key,isPublic} = item
-        const menus = memoryUtil.user.role.menus
-        const username = memoryUtil.user.username
+        const menus = this.props.user.role.menus
+        const username = this.props.user.username
         if(username==='admin' || isPublic || menus.indexOf(key)!== -1){
             return true;
         }else if(item.children){//如果当前用户有次item的某个子item的权限
@@ -64,11 +66,17 @@ const { SubMenu } = Menu;
         return menuList.reduce((pre,item)=>{
 
             if(this.hasAuth(item)){
+
                 if(!item.children){
+
+                    //判断item是否是当前对应的item
+                    if(item.key===path||path.indexOf(item.key)===0){
+                        this.props.setHeadTitle(item.title)
+                    }
                     //向pre中添加<Menu.Item>
                     pre.push((
                         <Menu.Item key={item.key} icon={item.icon}>
-                            <Link to={item.key}>
+                            <Link to={item.key} onClick={()=>{this.props.setHeadTitle(item.title)}}>
                             {item.title}
                             </Link>   
                        </Menu.Item>
@@ -155,4 +163,11 @@ const { SubMenu } = Menu;
  *   包装非路由组件，返回一个新的组件
  *    新的组件向非路由组件传递3个属性：history/location/match
  */
-export default withRouter(LeftNav)
+export default connect(
+    state=>({
+        user: state.user
+    }),
+    {
+        setHeadTitle
+    }
+)(withRouter(LeftNav)) 
